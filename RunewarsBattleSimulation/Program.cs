@@ -9,8 +9,15 @@ namespace RunewarsBattleSimulation
     class Program
     {
         static void Main(string[] args) {
-            Console.WriteLine("Hello World!");
+            Faction attacker = new DaqanLords();
+            Faction defender = new UthukYllan();
+
+            Battle battle = new Battle(attacker, defender);
+
+            battle.ResolveBattle();
+
             Console.ReadKey();
+
         }
     }
 }
