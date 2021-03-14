@@ -1,6 +1,6 @@
 ﻿namespace RunewarsBattleSimulation
 {
-    internal class UthukYllan : Faction
+    internal class BattleState
     {
     }
 }

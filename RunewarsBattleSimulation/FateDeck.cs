@@ -1,6 +1,6 @@
 ﻿namespace RunewarsBattleSimulation
 {
-    internal class DaqanLords : Faction
+    public class FateDeck
     {
     }
 }

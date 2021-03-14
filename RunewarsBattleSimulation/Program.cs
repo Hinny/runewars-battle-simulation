@@ -9,8 +9,8 @@ namespace RunewarsBattleSimulation
     class Program
     {
         static void Main(string[] args) {
-            Faction attacker = new DaqanLords();
-            Faction defender = new UthukYllan();
+            Player attacker = CreateDaqanPlayer();
+            Player defender = CreateUthukPlayer();
 
             Battle battle = new Battle(attacker, defender);
 
@@ -18,6 +18,16 @@ namespace RunewarsBattleSimulation
 
             Console.ReadKey();
 
+        }
+
+        static Player CreateDaqanPlayer() {
+            List<UnitType> unitTypes = new List<UnitType>();
+            unitTypes.Add(new Footman(3));
+            return new Player(unitTypes);
+        }
+        static Player CreateUthukPlayer() {
+            List<UnitType> unitTypes = new List<UnitType>();
+            return new Player(unitTypes);
         }
     }
 }
