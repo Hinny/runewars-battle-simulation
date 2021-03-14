@@ -22,6 +22,20 @@ namespace RunewarsBattleSimulation
         public BattleResolution ResolveBattle() {
             Console.WriteLine("Resolve Battle!");
             foreach (UnitType unitType in attacker.GetUnitTypes()) {
+                attacker.GetType().ToString();
+                Console.WriteLine("Unit type: " + unitType.GetType().ToString());
+                Console.WriteLine("Standing figures: " + unitType.GetStandingFigures().Count.ToString());
+                unitType.DealDamage();
+                Console.WriteLine("Damage Dealt!");
+                Console.WriteLine("Standing figures: " + unitType.GetStandingFigures().Count.ToString());
+                unitType.DealRout();
+                Console.WriteLine("Rout Dealt!");
+                Console.WriteLine("Standing figures: " + unitType.GetStandingFigures().Count.ToString());
+            }
+
+            foreach (UnitType unitType in defender.GetUnitTypes()) {
+                attacker.GetType().ToString();
+                Console.WriteLine("Unit type: " + unitType.GetType().ToString());
                 Console.WriteLine("Standing figures: " + unitType.GetStandingFigures().Count.ToString());
                 unitType.DealDamage();
                 Console.WriteLine("Damage Dealt!");

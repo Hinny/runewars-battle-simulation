@@ -22,11 +22,15 @@ namespace RunewarsBattleSimulation
 
         static Player CreateDaqanPlayer() {
             List<UnitType> unitTypes = new List<UnitType>();
-            unitTypes.Add(new Footman(3));
+            unitTypes.Add(new Footman(4));
+            unitTypes.Add(new Knight(2));
             return new Player(unitTypes);
         }
         static Player CreateUthukPlayer() {
             List<UnitType> unitTypes = new List<UnitType>();
+            unitTypes.Add(new Berserker(4));
+            unitTypes.Add(new BloodSister(3));
+
             return new Player(unitTypes);
         }
     }

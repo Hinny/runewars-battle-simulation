@@ -21,13 +21,11 @@ namespace RunewarsBattleSimulation
         protected readonly int initiative;
         protected bool hasActivated;
 
-        protected UnitType(string name,
-                           Shape shape,
+        protected UnitType(Shape shape,
                            int maxFigures,
                            int health,
                            int initiative,
                            int startingAmountofFigures) {
-            this.name = name;
             this.shape = shape;
             this.maxFigures = maxFigures;
             this.health = health;

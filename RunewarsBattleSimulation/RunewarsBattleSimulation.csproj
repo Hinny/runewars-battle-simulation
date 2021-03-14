@@ -46,8 +46,11 @@
     <Compile Include="Battle.cs" />
     <Compile Include="BattleResolution.cs" />
     <Compile Include="BattleState.cs" />
+    <Compile Include="Berserker.cs" />
+    <Compile Include="BloodSister.cs" />
     <Compile Include="FateDeck.cs" />
     <Compile Include="Footman.cs" />
+    <Compile Include="Knight.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

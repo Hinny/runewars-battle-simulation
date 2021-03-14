@@ -1,12 +1,12 @@
 ﻿namespace RunewarsBattleSimulation
 {
-    public class Footman : UnitType
+    public class Berserker : UnitType
     {
-        public Footman(int startingAmount)
+        public Berserker(int startingAmount)
             : base(shape: Shape.triangle,
                    maxFigures: 16,
                    health: 1,
-                   initiative: 3,
+                   initiative: 2,
                    startingAmountofFigures: startingAmount) { }
 
     }
