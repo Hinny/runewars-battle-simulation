@@ -9,8 +9,29 @@ namespace RunewarsBattleSimulation
     class Program
     {
         static void Main(string[] args) {
-            Console.WriteLine("Hello World!");
+            Player attacker = CreateDaqanPlayer();
+            Player defender = CreateUthukPlayer();
+
+            Battle battle = new Battle(attacker, defender);
+
+            battle.ResolveBattle();
+
             Console.ReadKey();
+
+        }
+
+        static Player CreateDaqanPlayer() {
+            List<UnitType> unitTypes = new List<UnitType>();
+            unitTypes.Add(new Footman(4));
+            unitTypes.Add(new Knight(2));
+            return new Player(unitTypes);
+        }
+        static Player CreateUthukPlayer() {
+            List<UnitType> unitTypes = new List<UnitType>();
+            unitTypes.Add(new Berserker(4));
+            unitTypes.Add(new BloodSister(3));
+
+            return new Player(unitTypes);
         }
     }
 }
