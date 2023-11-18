@@ -48,7 +48,6 @@ class SiegeTower(UnitType):
     def __init__(self, number_of_units):
         super().__init__("Siege Tower", "hexagon", 3, "Lay Siege", 2, 8, number_of_units)
 
-
 # Latari Unit Types   
 class Archer(UnitType):
     def __init__(self, number_of_units):
@@ -65,7 +64,6 @@ class Sorceress(UnitType):
 class Warrior(UnitType):
     def __init__(self, number_of_units):
         super().__init__("Warrior", "rectangle", 2, "Overpower", 4, 8, number_of_units)
-
 
 # Waiqar Unit Types
 
