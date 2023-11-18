@@ -194,7 +194,7 @@ class FateDeck:
 
     def draw_card(self):
         if not self.draw_pile:
-            # Blanda om discard om kortleken är tom
+            # If draw pile is empty, shuffle the discard pile becomming the new draw pile
             self.draw_pile.extend(self.discard_pile)
             self.discard_pile = []
             self.shuffle()
