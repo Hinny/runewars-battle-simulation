@@ -13,23 +13,22 @@ class UnitType:
         if number_of_new_units > self.maxNumber:
             number_of_new_units = self.maxNumber
         for _ in range(0, number_of_new_units):
-            unit = Unit()
+            unit = Unit(self)
             self.units.append(unit)
+            
+    def number_of_available_units(self):
+        """
+        Returns the number of units of this unit type that are standing and have not activated.
+        """
+        return sum(1 for unit in self.units if unit.is_standing and not unit.has_activated)
+
     
 class Unit:
-    def __init__(self):
-        self.damageTokens = 0
-        self.isStanding = True
-        self.hasActivated = False
-
-    def take_one_damage(self):
-        self.damageTokens += 1
-        
-    def rout(self):
-        self.isStanding = False
-    
-    def activate(self):
-        self.hasActivated = True
+    def __init__(self, unit_type):
+        self.unit_type = unit_type
+        self.damage_taken = 0
+        self.is_standing = True
+        self.has_activated = False
 
 # Daqan Unit Types   
 class Bowman(UnitType):

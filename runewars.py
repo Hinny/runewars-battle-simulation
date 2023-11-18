@@ -22,4 +22,4 @@ fate_deck = FateDeck()
 
 battle_simulator = BattleSimulator(daqan_lords, latari_elves, fate_deck)
 
-battle_simulator.simulate_round()
+battle_simulator.battle()
