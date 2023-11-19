@@ -14,7 +14,6 @@ class Faction:
         3. Routed units.
         If a units total damage taken is equal to its health, it will be destroyed (and removed from the faction).
         """
-        print("Dealing " + str(number_of_damage) + " damage to faction " + self.name)
         for _ in range(number_of_damage):
             # Gather all units
             all_units = [u for unit_type in self.unit_types for u in unit_type.units]
@@ -29,16 +28,17 @@ class Faction:
             if target_units:
                 # Assign damage to the first target unit
                 target_unit = target_units[0]
+                print(" - Dealing 1 damage to " + self.name + " " + target_unit.unit_type.name)
                 target_unit.damage_taken += 1
                 # Check if the unit is destroyed
                 if target_unit.damage_taken >= target_unit.unit_type.health:
+                    print("   (" + target_unit.unit_type.name + " destroyed)")
                     target_unit.unit_type.units.remove(target_unit)
             else:
                 # No units left to take damage
                 break
 
     def deal_rout(self, number_of_rout):
-        print("Routing " + str(number_of_rout) + " unit(s)") #TODO: replace with actual ability
         """
         Routs the number of units in this faction, using this priority according to the rules:
         1. Undamaged standing units
@@ -59,6 +59,7 @@ class Faction:
             if target_units:
                 # Rout the first target unit
                 target_unit = target_units[0]
+                print(" - Routing " + self.name + " " + target_unit.unit_type.name)
                 target_unit.is_standing = False
             else:
                 # No more standing units to rout

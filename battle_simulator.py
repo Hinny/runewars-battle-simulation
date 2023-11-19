@@ -9,45 +9,27 @@ class BattleSimulator:
         self.defender_faction = defender_faction
         self.fate_deck = fate_deck
 
-    def battle(self):
-
-        print("--== Start of Battle ==--")
+    def resolve_battle(self):
+        print("₪" * 79)
+        self.print_centered_line("Start of Battle", "₪")
         self.print_battle_status(self.attacker_faction, self.defender_faction)
-
-        # Organizer the attacker's units according to initiativ
-        attacker_unit_types_by_initiative = {}
-        for unit_type in self.attacker_faction.unit_types:
-            initiative = unit_type.initiative
-            if initiative not in attacker_unit_types_by_initiative:
-                attacker_unit_types_by_initiative[initiative] = []
-            attacker_unit_types_by_initiative[initiative].append(unit_type)
-
-        # Organizer the defender's units according to initiativ
-        defender_unit_types_by_initiative = {}
-        for unit_type in self.defender_faction.unit_types:
-            initiative = unit_type.initiative
-            if initiative not in defender_unit_types_by_initiative:
-                defender_unit_types_by_initiative[initiative] = []
-            defender_unit_types_by_initiative[initiative].append(unit_type)
 
         round_number = 1
         # Loop through all the initative values
         for initiative in range(1, 6):
+            print("═" * 79)
+            self.print_centered_line("INITIATIVE " + str(initiative), "═")
 
-            more_units_to_activate = True
-
-            while more_units_to_activate:
+            while True:
                 # Sort out unit_types that has at least 1 standing unit that has not been already activated and that belongs to this initiative
                 standing_not_activated_attacker_unit_types = [
                     unit_type for unit_type in self.attacker_faction.unit_types
-                    if unit_type.initiative == initiative and 
-                    any(unit.is_standing and not unit.has_activated for unit in unit_type.units)
+                    if unit_type.initiative == initiative and (unit_type.number_of_available_units() > 0)
                 ]
 
                 standing_not_activated_defender_unit_types = [
                     unit_type for unit_type in self.defender_faction.unit_types
-                    if unit_type.initiative == initiative and 
-                    any(unit.is_standing and not unit.has_activated for unit in unit_type.units)
+                    if unit_type.initiative == initiative and (unit_type.number_of_available_units() > 0)
                 ]
 
                 # Randomy select unit types from the available
@@ -63,21 +45,20 @@ class BattleSimulator:
 
                 # If at least one of the attacker or defender unit types was selected, perform a sub step
                 if attacker_unit_type_choice or defender_unit_type_choice:
-                    print("--== Round " + str(round_number) + " ==--")
-                    self.perform_battle_round(attacker_unit_type_choice, defender_unit_type_choice)
-                    print("--== Status After Round " + str(round_number) + " ==--")
+                    self.print_centered_line("Battle Round " + str(round_number), "┈")
+                    self.resolve_battle_round(attacker_unit_type_choice, defender_unit_type_choice)
+                    print("┈" * 79)
+                    self.print_centered_line("Status After Round " + str(round_number), " ")
+                    print()
                     self.print_battle_status(self.attacker_faction, self.defender_faction)
                     round_number += 1
                 else:
-                    more_units_to_activate = False
+                    break
         
-        print("--== End of Battle ==--")
-        self.print_battle_status(self.attacker_faction, self.defender_faction)
+        winner, attacker_strength, defender_strength = self.calculate_battle_resolution(self.attacker_faction, self.defender_faction)
+        return winner, attacker_strength, defender_strength
 
-        winner = self.resolve_battle(self.attacker_faction, self.defender_faction)
-        print("The winner is " + winner + "!")
-
-    def perform_battle_round(self, attacker_unit_type, defender_unit_type):
+    def resolve_battle_round(self, attacker_unit_type, defender_unit_type):
         attacker_damage = 0
         attacker_rout = 0
         attacker_orb = 0
@@ -88,19 +69,22 @@ class BattleSimulator:
         defender_text = "None"
 
         if attacker_unit_type:
-            attacker_text = str(attacker_unit_type.number_of_available_units()) + "x" + attacker_unit_type.name
+            attacker_text = str(attacker_unit_type.number_of_available_units()) + " x " + attacker_unit_type.name
             attacker_hand = self.fate_deck.draw_hand(len(attacker_unit_type.units))
             (attacker_damage, attacker_rout, attacker_orb) = self.fate_deck.calculate_total_results(attacker_hand, attacker_unit_type.shape)
         if defender_unit_type:
-            defender_text = str(defender_unit_type.number_of_available_units()) + "x" + defender_unit_type.name
+            defender_text = str(defender_unit_type.number_of_available_units()) + " x " + defender_unit_type.name
             defender_hand = self.fate_deck.draw_hand(len(defender_unit_type.units))
             (defender_damage, defender_rout, defender_orb) = self.fate_deck.calculate_total_results(defender_hand, defender_unit_type.shape)
+    
+        self.print_centered_line(attacker_text + " vs " + defender_text, " ")       
+        print()
 
         for _ in range(0, attacker_orb):
-            print("Performing " + attacker_unit_type.special_ability) #TODO: replace with actual ability
+            print(" - " + self.attacker_faction.name + " " + attacker_unit_type.name + " performs " + attacker_unit_type.special_ability) #TODO: replace with actual ability
 
         for _ in range(0, defender_orb):
-            print("Performing " + defender_unit_type.special_ability) #TODO: replace with actual ability
+            print(" - " + self.defender_faction.name + " " + defender_unit_type.name + " performs " + defender_unit_type.special_ability) #TODO: replace with actual ability
 
         if (attacker_rout > 0):
             self.defender_faction.deal_rout(attacker_rout)
@@ -122,38 +106,7 @@ class BattleSimulator:
                 unit.has_activated = True
             self.fate_deck.discard_hand(defender_hand)
 
-    def print_battle_status(self, attacker_faction, defender_faction):
-        """
-        Prints the current status of the battle in the terminal.
-        Each unit is represented with its type, initiative, health, shape, and damage/routed status.
-        The damage and routed status are aligned independently of the length of the unit type name.
-        """
-        print(f"Attacker: {attacker_faction.name:<30} | Defender: {defender_faction.name:<30}")
-        
-        # Function to create a string representation of a unit
-        def unit_to_string(unit):
-            health_symbol = '♥'
-            shape_symbol = {'triangle': '▲', 'circle': '⬤', 'rectangle': '▮', 'hexagon': '⬣'}[unit.unit_type.shape]
-            unit_info = f"{unit.unit_type.name} (I{unit.unit_type.initiative}- {unit.unit_type.health}{health_symbol}-{shape_symbol} )"
-            damage_symbols = '◉' * unit.damage_taken + '⚑' * (not unit.is_standing)
-            return f"{unit_info:<25} {damage_symbols:>10}"
-
-        # Gather units for both factions
-        attacker_units = [unit for unit_type in attacker_faction.unit_types for unit in unit_type.units]
-        defender_units = [unit for unit_type in defender_faction.unit_types for unit in unit_type.units]
-
-        # Determine the maximum length for alignment
-        max_units_length = max(len(attacker_units), len(defender_units))
-
-        # Print units side by side
-        for i in range(max_units_length):
-            attacker_unit_str = unit_to_string(attacker_units[i]) if i < len(attacker_units) else ''
-            defender_unit_str = unit_to_string(defender_units[i]) if i < len(defender_units) else ''
-            print(f"{attacker_unit_str:<40} | {defender_unit_str}")
-
-        print("-" * 79)
-
-    def resolve_battle(self, attacker_faction, defender_faction):
+    def calculate_battle_resolution(self, attacker_faction, defender_faction):
         """
         Resolves the battle by counting the number of standing units for both factions.
         Units with shape 'hexagon' contribute to strength even if routed.
@@ -185,4 +138,65 @@ class BattleSimulator:
             # In case of a tie, the defender wins
             winner = defender_faction.name
 
-        return winner
+        print("━" * 79)
+        print()
+        print(attacker_faction.name + "'s final strenght is " + str(attacker_strength))
+        print(defender_faction.name + "'s final strenght is " + str(defender_strength))
+        print()
+        print("˚₊‧⁺˖✮ The winner is " + winner + "! ✮˖⁺‧₊˚")
+        print()
+        print("₪" * 79)
+        return winner, attacker_strength, defender_strength
+
+    def print_battle_status(self, attacker_faction, defender_faction):
+        """
+        Prints the current status of the battle in the terminal.
+        Each unit is represented with its type, initiative, health, shape, and damage/routed status.
+        The damage and routed status are aligned independently of the length of the unit type name.
+        """
+        print(f"Attacker: {attacker_faction.name:<29} | Defender: {defender_faction.name:<30}")
+        
+        # Function to create a string representation of a unit
+        def unit_to_string(unit):
+            health_symbol = '♥'
+            shape_symbol = {'triangle': '▲', 'circle': '⬤', 'rectangle': '▮', 'hexagon': '⬣'}[unit.unit_type.shape]
+            unit_info = f"{unit.unit_type.name} (I{unit.unit_type.initiative}- {unit.unit_type.health}{health_symbol}-{shape_symbol} )"
+            damage_symbols = '◉' * unit.damage_taken + '⚑' * (not unit.is_standing)
+            return f"{unit_info:<25} {damage_symbols:>10}"
+
+        # Gather units for both factions
+        attacker_units = [unit for unit_type in attacker_faction.unit_types for unit in unit_type.units]
+        defender_units = [unit for unit_type in defender_faction.unit_types for unit in unit_type.units]
+
+        # Determine the maximum length for alignment
+        max_units_length = max(len(attacker_units), len(defender_units))
+
+        # Print units side by side
+        for i in range(max_units_length):
+            attacker_unit_str = unit_to_string(attacker_units[i]) if i < len(attacker_units) else ''
+            defender_unit_str = unit_to_string(defender_units[i]) if i < len(defender_units) else ''
+            print(f"{attacker_unit_str:<39} | {defender_unit_str}")
+
+    def print_centered_line(self, text, padding_char):
+        """
+        Prints a line of 79 characters with the text string centered and padded with the padding character.
+        There will be a whitespace on each side of the text string.
+        """
+        # Total length of the line
+        total_length = 79
+
+        # Ensuring that the text is surrounded by a whitespace on each side
+        text = f" {text} "
+
+        # Calculate the amount of padding needed on each side
+        padding_length = (total_length - len(text)) // 2
+
+        # Constructing the line
+        line = padding_char * padding_length + text + padding_char * padding_length
+
+        # Adjust if the total length is not 79 due to odd division
+        if len(line) < total_length:
+            line += padding_char
+
+        # Printing the line
+        print(line)

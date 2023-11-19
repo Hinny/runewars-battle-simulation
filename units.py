@@ -45,7 +45,7 @@ class Knight(UnitType):
 
 class SiegeTower(UnitType):
     def __init__(self, number_of_units):
-        super().__init__("Siege Tower", "hexagon", 3, "Lay Siege", 2, 8, number_of_units)
+        super().__init__("Siege Tower", "hexagon", 3, "Lay Siege", 5, 4, number_of_units)
 
 # Latari Unit Types   
 class Archer(UnitType):
