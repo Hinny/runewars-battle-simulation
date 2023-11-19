@@ -21,7 +21,6 @@ class UnitType:
         Returns the number of units of this unit type that are standing and have not activated.
         """
         return sum(1 for unit in self.units if unit.is_standing and not unit.has_activated)
-
     
 class Unit:
     def __init__(self, unit_type):

@@ -1,7 +1,7 @@
-from factions import Faction
-from units import Bowman, Footman, Knight, SiegeTower, Archer, PegasusRider, Sorceress, Warrior, Sorcerer, Razorwing,Beastman, Hellhound, Dragon, Giant
+from faction import Faction
+from unit_type import Bowman, Footman, Knight, SiegeTower, Archer, PegasusRider, Sorceress, Warrior, Sorcerer, Razorwing,Beastman, Hellhound, Dragon, Giant
 from fate_deck import FateDeck
-from battle_simulator import BattleSimulator
+from battle import Battle
 
 daqan_lords = Faction("Daqan Lords")
 latari_elves = Faction("Latari Elves")
@@ -21,6 +21,6 @@ latari_elves.add_unit_type(Warrior(1))
 
 fate_deck = FateDeck()
 
-battle_simulator = BattleSimulator(daqan_lords, latari_elves, fate_deck)
+battle = Battle(daqan_lords, latari_elves, fate_deck)
 
-battle_simulator.resolve_battle()
+battle.resolve_battle()
