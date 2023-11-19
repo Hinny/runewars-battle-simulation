@@ -17,7 +17,6 @@ class Battle:
         round_number = 1
         # Loop through all the initative values
         for initiative in range(1, 6):
-            print("═" * 79)
             self.print_centered_line("INITIATIVE " + str(initiative), "═")
 
             while True:
@@ -46,10 +45,10 @@ class Battle:
                 # If at least one of the attacker or defender unit types was selected, perform a sub step
                 if attacker_unit_type_choice or defender_unit_type_choice:
                     self.print_centered_line("Battle Round " + str(round_number), "┈")
-                    self.resolve_battle_round(attacker_unit_type_choice, defender_unit_type_choice)
-                    print("┈" * 79)
-                    self.print_centered_line("Status After Round " + str(round_number), " ")
                     print()
+                    self.resolve_battle_round(attacker_unit_type_choice, defender_unit_type_choice)
+                    print()
+                    self.print_centered_line("Status After Round " + str(round_number), " ")
                     self.print_battle_status(self.attacker_faction, self.defender_faction)
                     round_number += 1
                 else:
@@ -154,6 +153,7 @@ class Battle:
         Each unit is represented with its type, initiative, health, shape, and damage/routed status.
         The damage and routed status are aligned independently of the length of the unit type name.
         """
+        print()
         print(f"Attacker: {attacker_faction.name:<29} | Defender: {defender_faction.name:<30}")
         
         # Function to create a string representation of a unit
@@ -176,6 +176,8 @@ class Battle:
             attacker_unit_str = unit_to_string(attacker_units[i]) if i < len(attacker_units) else ''
             defender_unit_str = unit_to_string(defender_units[i]) if i < len(defender_units) else ''
             print(f"{attacker_unit_str:<39} | {defender_unit_str}")
+        
+        print()
 
     def print_centered_line(self, text, padding_char):
         """

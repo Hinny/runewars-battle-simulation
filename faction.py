@@ -1,3 +1,5 @@
+import random
+
 class Faction:
     def __init__(self, name):
         self.name = name
@@ -27,7 +29,7 @@ class Faction:
 
             if target_units:
                 # Assign damage to the first target unit
-                target_unit = target_units[0]
+                target_unit = random.choice(target_units)
                 print(" - Dealing 1 damage to " + self.name + " " + target_unit.unit_type.name)
                 target_unit.damage_taken += 1
                 # Check if the unit is destroyed
@@ -58,7 +60,7 @@ class Faction:
 
             if target_units:
                 # Rout the first target unit
-                target_unit = target_units[0]
+                target_unit = random.choice(target_units)
                 print(" - Routing " + self.name + " " + target_unit.unit_type.name)
                 target_unit.is_standing = False
             else:
