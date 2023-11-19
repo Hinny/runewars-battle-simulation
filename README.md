@@ -2,15 +2,17 @@
 A hobby project that aim to balance units (especially homebrew factions) for Runewars board game. 
 
 ## Next Steps
-- [ ] Make random damage
-- [ ] Make random rout
-- [ ] Battle Resolution
-- [ ] Detailed logging
+- [x] Make random damage
+- [x] Make random rout
+- [x] Battle Resolution
+- [ ] Make damage and rout dealing random
 - [ ] Desision Agent Plugin
   - [ ] Random
   - [ ] Prompt (user input)
+- [ ] Special Abilities
+- [ ] Detailed logging
+- [ ] Desision Agent Plugin
   - [ ] ML
 - [ ] Train ML
-- [ ] Special Abilities
-- [ ] All units including expansions
+- [ ] All units including expansions (official and fanmade)
 - [ ] Resource dials
