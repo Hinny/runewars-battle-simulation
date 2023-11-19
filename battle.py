@@ -1,9 +1,9 @@
 import random
 from fate_deck import FateDeck
-from factions import Faction
-from units import UnitType, Unit
+from faction import Faction
+from unit_type import UnitType, Unit
 
-class BattleSimulator:
+class Battle:
     def __init__(self, attacker_faction, defender_faction, fate_deck):
         self.attacker_faction = attacker_faction
         self.defender_faction = defender_faction
