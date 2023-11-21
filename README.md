@@ -5,11 +5,15 @@ A hobby project that aim to balance units (especially homebrew factions) for Run
 - [x] Make random damage
 - [x] Make random rout
 - [x] Battle Resolution
-- [ ] Make damage and rout dealing random
-- [ ] Desision Agent Plugin
-  - [ ] Random
-  - [ ] Prompt (user input)
+- [x] Make damage and rout dealing random
+- [x] Player
+  - [x] Random
+  - [x] Prompt (user input)
+- [x] Cleaner printouts
+- [ ] action.py - class for handling damage, rout, special ablities and other unit/unit_type choises.
+- [ ] Fortifications
 - [ ] Special Abilities
+- [ ] Defensive Development Tokens
 - [ ] Detailed logging
 - [ ] Desision Agent Plugin
   - [ ] ML
