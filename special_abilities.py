@@ -1,13 +1,47 @@
-import random
-
-class Faction:
-    def __init__(self, name, player):
+class SpecialAbility:
+    def __init__(self, name, description):
         self.name = name
-        self.unit_types = []
-        self.player = player
+        self.description = description
 
-    def add_unit_type(self, unit_type):
-        self.unit_types.append(unit_type)
+    def __str__(self):
+        return f"{self.name}: {self.description}"
+
+    def resolve(self):
+        raise NotImplementedError
+
+class RegularDamage(SpecialAbility):
+    def __init__(self):
+        self.name = "Damage"
+        self.description = "Deal 1 damage (◉ )."
+    
+    def resolve(self, your_faction, opponent_faction):
+        print(f"{self.description}")
+
+
+class RegularRout(SpecialAbility):
+    def __init__(self):
+        self.name = "Rout"
+        self.description = "Deal 1 rout (⚑ )."
+    
+    def resolve(self, your_faction, opponent_faction):
+        print(f"{self.description}")
+
+
+class ConcentratedFire(SpecialAbility):
+    def __init__(self):
+        self.name = "Concentrated Fire"
+        self.description = "Deal 1 damage (◉ ). Your opponent must assign this to a unit with more than 1 health (♥), if able."
+    
+    def resolve(self, your_faction, opponent_faction):
+        print(f"{self.description}")
+
+class PlaceHolder(SpecialAbility):
+    def __init__(self):
+        self.name = "Placeholder"
+        self.description = "Placeholder"
+    
+    def resolve(self, your_faction, opponent_faction):
+        pass
 
     def deal_damage(self, number_of_damage):
         """
@@ -45,7 +79,6 @@ class Faction:
                 print("   (" + target_unit.unit_type.name + " destroyed)")
                 target_unit.unit_type.units.remove(target_unit)
 
-
     def deal_rout(self, number_of_rout):
         """
         Routs the number of units in this faction, using this priority according to the rules:
@@ -76,4 +109,3 @@ class Faction:
             target_unit = self.player.choose_own_unit_for_regular_rout(target_units)
             print("   " + target_unit.unit_type.name + " is routed")
             target_unit.is_standing = False
-

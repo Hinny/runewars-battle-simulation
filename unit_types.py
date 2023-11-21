@@ -1,8 +1,12 @@
+from special_abilities import RegularDamage, RegularRout, ConcentratedFire
+
 class UnitType:
     def __init__(self, name, shape, health, special_ability, initiative, maxNumber, faction, number_of_units):
         self.name = name
         self.shape = shape
         self.health = health
+        self.regular_damage = RegularDamage()
+        self.regular_rout = RegularRout()
         self.special_ability = special_ability
         self.initiative = initiative
         self.maxNumber = maxNumber
@@ -66,36 +70,36 @@ class Unit:
 # Daqan Unit Types   
 class Bowman(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Bowman", "triangle", 1, "Concentrated Fire", 1, 8, faction, number_of_units)
+        super().__init__("Bowman", "triangle", 1, ConcentratedFire(), 1, 8, faction, number_of_units)
 
 class Footman(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Footman", "triangle", 1, "Valiant Strike", 3, 16, faction, number_of_units)
+        super().__init__("Footman", "triangle", 1, RegularDamage(), 3, 16, faction, number_of_units)
 
 class Knight(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Knight", "rectangle", 2, "Command", 2, 8, faction, number_of_units)
+        super().__init__("Knight", "rectangle", 2, RegularDamage(), 2, 8, faction, number_of_units)
 
 class SiegeTower(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Siege Tower", "hexagon", 3, "Lay Siege", 5, 4, faction, number_of_units)
+        super().__init__("Siege Tower", "hexagon", 3, RegularDamage(), 5, 4, faction, number_of_units)
 
 # Latari Unit Types   
 class Archer(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Archer", "triangle", 1, "Crack Shot", 1, 16, faction, number_of_units)
+        super().__init__("Archer", "triangle", 1, RegularDamage(), 1, 16, faction, number_of_units)
 
 class PegasusRider(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Pegasus Rider", "rectangle", 3, "Charge", 2, 4, faction, number_of_units)
+        super().__init__("Pegasus Rider", "rectangle", 3, RegularDamage(), 2, 4, faction, number_of_units)
 
 class Sorceress(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Sorceress", "circle", 1, "Word of Vaal", 3, 8, faction, number_of_units)
+        super().__init__("Sorceress", "circle", 1, RegularDamage(), 3, 8, faction, number_of_units)
 
 class Warrior(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Warrior", "rectangle", 2, "Overpower", 4, 8, faction, number_of_units)
+        super().__init__("Warrior", "rectangle", 2, RegularDamage(), 4, 8, faction, number_of_units)
 
 # Waiqar Unit Types
 
@@ -104,24 +108,24 @@ class Warrior(UnitType):
 # Neutral Unit Types
 class Sorcerer(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Sorcerer", "circle", 1, "Undying", 1, 8, faction, number_of_units)
+        super().__init__("Sorcerer", "circle", 1, RegularDamage(), 1, 8, faction, number_of_units)
 
 class Razorwing(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Razorwing", "triangle", 1, "Stun", 1, 8, faction, number_of_units)
+        super().__init__("Razorwing", "triangle", 1, RegularDamage(), 1, 8, faction, number_of_units)
 
 class Beastman(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Beastman", "triangle", 1, "Roar", 2, 8, faction, number_of_units)
+        super().__init__("Beastman", "triangle", 1, RegularDamage(), 2, 8, faction, number_of_units)
 
 class Hellhound(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Hellhound", "rectangle", 2, "Burning", 3, 4, faction, number_of_units)
+        super().__init__("Hellhound", "rectangle", 2, RegularDamage(), 3, 4, faction, number_of_units)
 
 class Dragon(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Dragon", "hexagon", 4, "Flamming Breath", 4, 4, faction, number_of_units)
+        super().__init__("Dragon", "hexagon", 4, RegularDamage(), 4, 4, faction, number_of_units)
 
 class Giant(UnitType):
     def __init__(self, faction, number_of_units):
-        super().__init__("Giant", "hexagon", 5, "Rage", 5, 4, faction, number_of_units)
+        super().__init__("Giant", "hexagon", 5, RegularDamage(), 5, 4, faction, number_of_units)
