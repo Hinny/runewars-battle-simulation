@@ -1,9 +1,10 @@
 import random
 
 class Faction:
-    def __init__(self, name):
+    def __init__(self, name, player):
         self.name = name
         self.unit_types = []
+        self.player = player
 
     def add_unit_type(self, unit_type):
         self.unit_types.append(unit_type)
@@ -16,6 +17,7 @@ class Faction:
         3. Routed units.
         If a units total damage taken is equal to its health, it will be destroyed (and removed from the faction).
         """
+        print(" - Dealing " + str(number_of_damage) + " damage to " + self.name + " unit(s)")
         for _ in range(number_of_damage):
             # Gather all units
             all_units = [u for unit_type in self.unit_types for u in unit_type.units]
@@ -24,21 +26,25 @@ class Faction:
             standing_units = [u for u in all_units if u.is_standing and u.damage_taken == 0]
             routed_units = [u for u in all_units if not u.is_standing]
 
-            # Append the lists in priority order
-            target_units = damaged_units + standing_units + routed_units
-
-            if target_units:
-                # Assign damage to the first target unit
-                target_unit = random.choice(target_units)
-                print(" - Dealing 1 damage to " + self.name + " " + target_unit.unit_type.name)
-                target_unit.damage_taken += 1
-                # Check if the unit is destroyed
-                if target_unit.damage_taken >= target_unit.unit_type.health:
-                    print("   (" + target_unit.unit_type.name + " destroyed)")
-                    target_unit.unit_type.units.remove(target_unit)
+            if damaged_units:
+                target_units = damaged_units
+            elif standing_units:
+                target_units = standing_units
+            elif routed_units:
+                target_units = routed_units
             else:
                 # No units left to take damage
                 break
+
+            # Assign damage to the first target unit
+            target_unit = self.player.choose_own_unit_for_regular_damage(target_units)
+            print("   " + target_unit.unit_type.name + " takes 1 damage")
+            target_unit.damage_taken += 1
+            # Check if the unit is destroyed
+            if target_unit.damage_taken >= target_unit.unit_type.health:
+                print("   (" + target_unit.unit_type.name + " destroyed)")
+                target_unit.unit_type.units.remove(target_unit)
+
 
     def deal_rout(self, number_of_rout):
         """
@@ -48,6 +54,7 @@ class Faction:
         Units can only be routed when standing.
         If there are not more standing units, no more can be routed.
         """
+        print(" - Routing " + str(number_of_rout) + " " + self.name + " unit(s)")
         for _ in range(number_of_rout):
             # Gather all standing units
             standing_units = [u for unit_type in self.unit_types for u in unit_type.units if u.is_standing]
@@ -58,12 +65,15 @@ class Faction:
             # Append the lists in priority order
             target_units = undamaged_standing_units + damaged_standing_units
 
-            if target_units:
-                # Rout the first target unit
-                target_unit = random.choice(target_units)
-                print(" - Routing " + self.name + " " + target_unit.unit_type.name)
-                target_unit.is_standing = False
+            if undamaged_standing_units:
+                target_units = undamaged_standing_units
+            elif damaged_standing_units:
+                target_units = damaged_standing_units
             else:
                 # No more standing units to rout
                 break
+
+            target_unit = self.player.choose_own_unit_for_regular_rout(target_units)
+            print("   " + target_unit.unit_type.name + " is routed")
+            target_unit.is_standing = False
 

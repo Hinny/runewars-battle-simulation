@@ -17,28 +17,32 @@ class Battle:
         round_number = 1
         # Loop through all the initative values
         for initiative in range(1, 6):
-            self.print_centered_line("INITIATIVE " + str(initiative), "═")
+            self.print_centered_line("INITIATIVE (🗲 ) " + str(initiative), "═")
 
             while True:
                 # Sort out unit_types that has at least 1 standing unit that has not been already activated and that belongs to this initiative
                 standing_not_activated_attacker_unit_types = [
                     unit_type for unit_type in self.attacker_faction.unit_types
-                    if unit_type.initiative == initiative and (unit_type.number_of_available_units() > 0)
+                    if unit_type.initiative == initiative and (unit_type.get_number_of_available_units() > 0)
                 ]
 
                 standing_not_activated_defender_unit_types = [
                     unit_type for unit_type in self.defender_faction.unit_types
-                    if unit_type.initiative == initiative and (unit_type.number_of_available_units() > 0)
+                    if unit_type.initiative == initiative and (unit_type.get_number_of_available_units() > 0)
                 ]
 
                 # Randomy select unit types from the available
-                if standing_not_activated_attacker_unit_types:
-                    attacker_unit_type_choice = random.choice(standing_not_activated_attacker_unit_types)
+                if len(standing_not_activated_attacker_unit_types) > 1:
+                    attacker_unit_type_choice = self.attacker_faction.player.choose_next_activating_unit_type(standing_not_activated_attacker_unit_types)
+                elif len(standing_not_activated_attacker_unit_types) == 1:
+                    attacker_unit_type_choice = standing_not_activated_attacker_unit_types[0]
                 else:
                     attacker_unit_type_choice = None
 
-                if standing_not_activated_defender_unit_types:
-                    defender_unit_type_choice = random.choice(standing_not_activated_defender_unit_types)
+                if len(standing_not_activated_defender_unit_types) > 1:
+                    defender_unit_type_choice = self.defender_faction.player.choose_next_activating_unit_type(standing_not_activated_defender_unit_types)
+                elif len(standing_not_activated_defender_unit_types) == 1:
+                    defender_unit_type_choice = standing_not_activated_defender_unit_types[0]
                 else:
                     defender_unit_type_choice = None
 
@@ -53,7 +57,7 @@ class Battle:
                     round_number += 1
                 else:
                     break
-        
+  
         winner, attacker_strength, defender_strength = self.calculate_battle_resolution(self.attacker_faction, self.defender_faction)
         return winner, attacker_strength, defender_strength
 
@@ -68,15 +72,15 @@ class Battle:
         defender_text = "None"
 
         if attacker_unit_type:
-            attacker_text = str(attacker_unit_type.number_of_available_units()) + " x " + attacker_unit_type.name
+            attacker_text = str(attacker_unit_type.get_number_of_available_units()) + " x " + attacker_unit_type.name
             attacker_hand = self.fate_deck.draw_hand(len(attacker_unit_type.units))
             (attacker_damage, attacker_rout, attacker_orb) = self.fate_deck.calculate_total_results(attacker_hand, attacker_unit_type.shape)
         if defender_unit_type:
-            defender_text = str(defender_unit_type.number_of_available_units()) + " x " + defender_unit_type.name
+            defender_text = str(defender_unit_type.get_number_of_available_units()) + " x " + defender_unit_type.name
             defender_hand = self.fate_deck.draw_hand(len(defender_unit_type.units))
             (defender_damage, defender_rout, defender_orb) = self.fate_deck.calculate_total_results(defender_hand, defender_unit_type.shape)
     
-        self.print_centered_line(attacker_text + " vs " + defender_text, " ")       
+        self.print_centered_line(attacker_text + " | " + defender_text, " ")       
         print()
 
         for _ in range(0, attacker_orb):
@@ -156,14 +160,6 @@ class Battle:
         print()
         print(f"Attacker: {attacker_faction.name:<29} | Defender: {defender_faction.name:<30}")
         
-        # Function to create a string representation of a unit
-        def unit_to_string(unit):
-            health_symbol = '♥'
-            shape_symbol = {'triangle': '▲', 'circle': '⬤', 'rectangle': '▮', 'hexagon': '⬣'}[unit.unit_type.shape]
-            unit_info = f"{unit.unit_type.name} (I{unit.unit_type.initiative}- {unit.unit_type.health}{health_symbol}-{shape_symbol} )"
-            damage_symbols = '◉' * unit.damage_taken + '⚑' * (not unit.is_standing)
-            return f"{unit_info:<25} {damage_symbols:>10}"
-
         # Gather units for both factions
         attacker_units = [unit for unit_type in attacker_faction.unit_types for unit in unit_type.units]
         defender_units = [unit for unit_type in defender_faction.unit_types for unit in unit_type.units]
@@ -173,8 +169,8 @@ class Battle:
 
         # Print units side by side
         for i in range(max_units_length):
-            attacker_unit_str = unit_to_string(attacker_units[i]) if i < len(attacker_units) else ''
-            defender_unit_str = unit_to_string(defender_units[i]) if i < len(defender_units) else ''
+            attacker_unit_str = attacker_units[i].get_line_str() if i < len(attacker_units) else ''
+            defender_unit_str = defender_units[i].get_line_str() if i < len(defender_units) else ''
             print(f"{attacker_unit_str:<39} | {defender_unit_str}")
         
         print()
