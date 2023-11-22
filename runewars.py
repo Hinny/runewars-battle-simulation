@@ -1,8 +1,8 @@
-from faction import Faction
-from unit_type import Bowman, Footman, Knight, SiegeTower, Archer, PegasusRider, Sorceress, Warrior, Sorcerer, Razorwing,Beastman, Hellhound, Dragon, Giant
+from factions import Faction
+from unit_types import Bowman, Footman, Knight, SiegeTower, Archer, PegasusRider, Sorceress, Warrior, Sorcerer, Razorwing,Beastman, Hellhound, Dragon, Giant
 from fate_deck import FateDeck
 from battle import Battle
-from player import HumanPlayer, RandomAIPlayer
+from players import HumanPlayer, RandomAIPlayer
 
 
 random_ai_player_1 = RandomAIPlayer()
