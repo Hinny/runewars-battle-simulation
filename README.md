@@ -1,5 +1,5 @@
 # runewars-battle-simulation
-A hobby project that aim to balance units (especially homebrew factions) for Runewars board game. 
+A hobby project that aim to balance units (especially homebrew factions) for Runewars board game.
 
 ## Next Steps
 - [x] Make random damage
@@ -10,7 +10,7 @@ A hobby project that aim to balance units (especially homebrew factions) for Run
   - [x] Random
   - [x] Prompt (user input)
 - [x] Cleaner printouts
-- [ ] action.py - class for handling damage, rout, special ablities and other unit/unit_type choises.
+- [x] special_abilities.py - class for handling damage, rout and special ablities.
 - [ ] Fortifications
 - [ ] Special Abilities
 - [ ] Defensive Development Tokens

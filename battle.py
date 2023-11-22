@@ -33,14 +33,14 @@ class Battle:
 
                 # Randomy select unit types from the available
                 if len(standing_not_activated_attacker_unit_types) > 1:
-                    attacker_unit_type_choice = self.attacker_faction.player.choose_next_activating_unit_type(standing_not_activated_attacker_unit_types)
+                    attacker_unit_type_choice = self.attacker_faction.player.choose_unit_type(standing_not_activated_attacker_unit_types)
                 elif len(standing_not_activated_attacker_unit_types) == 1:
                     attacker_unit_type_choice = standing_not_activated_attacker_unit_types[0]
                 else:
                     attacker_unit_type_choice = None
 
                 if len(standing_not_activated_defender_unit_types) > 1:
-                    defender_unit_type_choice = self.defender_faction.player.choose_next_activating_unit_type(standing_not_activated_defender_unit_types)
+                    defender_unit_type_choice = self.defender_faction.player.choose_unit_type(standing_not_activated_defender_unit_types)
                 elif len(standing_not_activated_defender_unit_types) == 1:
                     defender_unit_type_choice = standing_not_activated_defender_unit_types[0]
                 else:
@@ -57,7 +57,7 @@ class Battle:
                     round_number += 1
                 else:
                     break
-  
+
         winner, attacker_strength, defender_strength = self.calculate_battle_resolution(self.attacker_faction, self.defender_faction)
         return winner, attacker_strength, defender_strength
 
@@ -81,51 +81,63 @@ class Battle:
             defender_text = str(defender_unit_type.get_number_of_available_units()) + " x " + defender_unit_type.name
             defender_hand = self.fate_deck.draw_hand(len(defender_unit_type.units))
             (defender_damage, defender_rout, defender_orb) = self.fate_deck.calculate_total_results(defender_hand, defender_unit_type.shape)
-    
-        self.print_centered_line(attacker_text + " | " + defender_text, " ")       
+
+        self.print_centered_line(attacker_text + " | " + defender_text, " ")
         print()
-        print(f"Attacker draws {len(attacker_hand)} Fate card(s).")
-        print(f"Defender draws {len(defender_hand)} Fate card(s).")
+        print(f"{self.attacker_faction.name} draws {len(attacker_hand)} Fate card(s).")
+        print(f"{self.defender_faction.name} draws {len(defender_hand)} Fate card(s).")
         print()
 
-        print(f"Attacker reveals {attacker_orb} orb result(s).")
-        print(f"Defender reveals {defender_orb} orb result(s).")
+        print(f"{self.attacker_faction.name} reveals {attacker_orb} orb result(s).")
+        print(f"{self.defender_faction.name} reveals {defender_orb} orb result(s).")
         print()
-        for _ in range(0, attacker_orb):
-            print(f" - Attacker's {attacker_unit_type.name} performs {attacker_unit_type.special_ability.name}")
+        for i in range(0, attacker_orb):
+            print(f" - {self.attacker_faction.name}'s {attacker_unit_type.name} performs {attacker_unit_type.special_ability.name}")
+            if i == 0:
+                print(f"   ({attacker_unit_type.special_ability.description})")
             attacker_unit_type.special_ability.resolve(self.attacker_faction, self.defender_faction)
-        for _ in range(0, defender_orb):
-            print(f" - Defender's {defender_unit_type.name} performs {defender_unit_type.special_ability.name}")
+        if attacker_orb:
+            print()
+        for i in range(0, defender_orb):
+            print(f" - {self.defender_faction.name}'s {defender_unit_type.name} performs {defender_unit_type.special_ability.name}")
+            if i == 0:
+                print(f"   ({defender_unit_type.special_ability.description})")
             defender_unit_type.special_ability.resolve(self.defender_faction, self.attacker_faction)
-        print()
+        if defender_orb:
+            print()
 
-        print(f"Attacker reveals {attacker_rout} rout result(s).")
-        print(f"Defender reveals {defender_rout} rout result(s).")
+        print(f"{self.attacker_faction.name} reveals {attacker_rout} rout result(s).")
+        print(f"{self.defender_faction.name} reveals {defender_rout} rout result(s).")
         print()
         for _ in range(0, attacker_rout):
-            print(f" - Attacker's {attacker_unit_type.name} deals 1 rout (⚑)")
+            print(f" - {self.attacker_faction.name}'s {attacker_unit_type.name} deals 1 rout (⚑)")
             attacker_unit_type.regular_rout.resolve(self.attacker_faction, self.defender_faction)
+        if attacker_rout:
+            print()
         for _ in range(0, defender_rout):
-            print(f" - Defender's {defender_unit_type.name} deals 1 rout (⚑ )")
+            print(f" - {self.defender_faction.name}'s {defender_unit_type.name} deals 1 rout (⚑ )")
             defender_unit_type.regular_rout.resolve(self.defender_faction, self.attacker_faction)
-        print()
+        if defender_rout:
+            print()
 
-        print(f"Attacker reveals {attacker_damage} damage result(s).")
-        print(f"Defender reveals {defender_damage} damage result(s).")
+        print(f"{self.attacker_faction.name} reveals {attacker_damage} damage result(s).")
+        print(f"{self.defender_faction.name} reveals {defender_damage} damage result(s).")
         print()
         for _ in range(0, attacker_damage):
-            print(f" - Attacker's {attacker_unit_type.name} deals 1 damage (◉ )")
+            print(f" - {self.attacker_faction.name}'s {attacker_unit_type.name} deals 1 damage (◉ )")
             attacker_unit_type.regular_damage.resolve(self.attacker_faction, self.defender_faction)
+        if attacker_damage:
+            print()
         for _ in range(0, defender_damage):
-            print(f" - Defender's {defender_unit_type.name} deals 1 damage (◉ )")
+            print(f" - {self.defender_faction.name}'s {defender_unit_type.name} deals 1 damage (◉ )")
             defender_unit_type.regular_damage.resolve(self.defender_faction, self.attacker_faction)
-        print()
-
+        if defender_damage:
+            print()
         if attacker_unit_type:
             for unit in attacker_unit_type.units:
                 unit.has_activated = True
             self.fate_deck.discard_hand(attacker_hand)
-        
+
         if defender_unit_type:
             for unit in defender_unit_type.units:
                 unit.has_activated = True
@@ -181,7 +193,7 @@ class Battle:
         """
         print()
         print(f"Attacker: {attacker_faction.name:<29} | Defender: {defender_faction.name:<30}")
-        
+
         # Gather units for both factions
         attacker_units = [unit for unit_type in attacker_faction.unit_types for unit in unit_type.units]
         defender_units = [unit for unit_type in defender_faction.unit_types for unit in unit_type.units]
@@ -194,7 +206,7 @@ class Battle:
             attacker_unit_str = attacker_units[i].get_line_str() if i < len(attacker_units) else ''
             defender_unit_str = defender_units[i].get_line_str() if i < len(defender_units) else ''
             print(f"{attacker_unit_str:<39} | {defender_unit_str}")
-        
+
         print()
 
     def print_centered_line(self, text, padding_char):
