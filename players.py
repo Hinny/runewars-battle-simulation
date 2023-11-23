@@ -1,7 +1,11 @@
 import random
+from factions import Faction
 
 class PlayerInterface:
-    def __init__(self, faction):
+    def __init__(self):
+        self.faction = None
+
+    def set_faction(self, faction):
         self.faction = faction
 
     def choose_unit_type(self, unit_types):
@@ -12,22 +16,22 @@ class PlayerInterface:
 
 class HumanPlayer(PlayerInterface):
     def choose_unit_type(self, unit_types):
-        print("          {self.faction.name}, choose a unit type:")
+        print(f"          {self.faction.name}, choose a unit type:")
         return self.choose_unit_type_from_list(unit_types)
 
     def choose_unit(self, units):
-        print("          {self.faction.name}, choose a unit:")
+        print(f"          {self.faction.name}, choose a unit:")
         return self.choose_unit_from_list(units)
 
     def choose_unit_type_from_list(self, unit_types):
         for i, unit_type in enumerate(unit_types):
-            print(f"          {i+1}. {unit_type.faction.name} {unit_type}")
+            print(f"           {i+1}. {unit_type.faction.name} {unit_type}")
         choice = self.get_user_choice(len(unit_types))
         return unit_types[choice - 1]
 
     def choose_unit_from_list(self, units):
         for i, unit in enumerate(units):
-            print(f"          {i+1}. {unit.unit_type.faction.name} {unit}")
+            print(f"           {i+1}. {unit.unit_type.faction.name} {unit}")
         choice = self.get_user_choice(len(units))
         return units[choice - 1]
 

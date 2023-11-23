@@ -11,10 +11,9 @@ A hobby project that aim to balance units (especially homebrew factions) for Run
   - [x] Prompt (user input)
 - [x] Cleaner printouts
 - [x] special_abilities.py - class for handling damage, rout and special ablities.
-- [ ] Fortifications
-- [ ] Special Abilities
-- [ ] Defensive Development Tokens
-- [ ] Detailed logging
+- [x] Faction Assets
+- [ ] All original Special Abilities and Factions
+- [ ] Logging to file
 - [ ] Desision Agent Plugin
   - [ ] ML
 - [ ] Train ML

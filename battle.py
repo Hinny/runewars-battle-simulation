@@ -151,20 +151,23 @@ class Battle:
         In case of a tie, the defender is declared the winner.
         """
         # Function to calculate the strength of a faction
-        def calculate_strength(faction):
-            strength = 0
+        def calculate_unit_strength(faction):
+            unit_strength = 0
             for unit_type in faction.unit_types:
                 if unit_type.shape == 'hexagon':
                     # All hexagon units count towards strength
-                    strength += len(unit_type.units)
+                    unit_strength += len(unit_type.units)
                 else:
                     # Only standing units count towards strength
-                    strength += sum(1 for unit in unit_type.units if unit.is_standing)
-            return strength
+                    unit_strength += sum(1 for unit in unit_type.units if unit.is_standing)
+            return unit_strength
 
-        # Count strength for both attacker and defender
-        attacker_strength = calculate_strength(attacker_faction)
-        defender_strength = calculate_strength(defender_faction)
+                # Count strength for both attacker and defender
+        attacker_unit_strength = calculate_unit_strength(attacker_faction)
+        defender_unit_strength = calculate_unit_strength(defender_faction)
+
+        attacker_strength = attacker_unit_strength + attacker_faction.strength
+        defender_strength = defender_unit_strength + defender_faction.strength
 
         # Determine the winner
         if attacker_strength > defender_strength:
@@ -177,6 +180,17 @@ class Battle:
 
         print("━" * 79)
         print()
+        print(attacker_faction.name + "'s unit strenght is " + str(attacker_unit_strength))
+        print(defender_faction.name + "'s unit strenght is " + str(defender_unit_strength))
+        print()
+
+        if attacker_faction.strength > 0:
+            print(attacker_faction.name + "'s forification bonus is " + str(attacker_faction.strength))
+        if defender_faction.strength > 0:
+            print(defender_faction.name + "'s forification bonus is " + str(defender_faction.strength))
+        if attacker_faction.strength > 0 or defender_faction.strength > 0:
+            print()
+
         print(attacker_faction.name + "'s final strenght is " + str(attacker_strength))
         print(defender_faction.name + "'s final strenght is " + str(defender_strength))
         print()
