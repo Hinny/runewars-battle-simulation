@@ -92,14 +92,14 @@ class Battle:
         print(f"{self.defender_faction.name} reveals {defender_orb} orb result(s).")
         print()
         for i in range(0, attacker_orb):
-            print(f" - {self.attacker_faction.name}'s {attacker_unit_type.name} performs {attacker_unit_type.special_ability.name}")
+            print(f" - {self.attacker_faction.name} {attacker_unit_type.name} performs {attacker_unit_type.special_ability.name}")
             if i == 0:
                 print(f"   ({attacker_unit_type.special_ability.description})")
             attacker_unit_type.special_ability.resolve(self.attacker_faction, self.defender_faction)
         if attacker_orb:
             print()
         for i in range(0, defender_orb):
-            print(f" - {self.defender_faction.name}'s {defender_unit_type.name} performs {defender_unit_type.special_ability.name}")
+            print(f" - {self.defender_faction.name} {defender_unit_type.name} performs {defender_unit_type.special_ability.name}")
             if i == 0:
                 print(f"   ({defender_unit_type.special_ability.description})")
             defender_unit_type.special_ability.resolve(self.defender_faction, self.attacker_faction)
@@ -110,12 +110,12 @@ class Battle:
         print(f"{self.defender_faction.name} reveals {defender_rout} rout result(s).")
         print()
         for _ in range(0, attacker_rout):
-            print(f" - {self.attacker_faction.name}'s {attacker_unit_type.name} deals 1 rout (⚑)")
+            print(f" - {self.attacker_faction.name} {attacker_unit_type.name} deals 1 rout (⚑)")
             attacker_unit_type.regular_rout.resolve(self.attacker_faction, self.defender_faction)
         if attacker_rout:
             print()
         for _ in range(0, defender_rout):
-            print(f" - {self.defender_faction.name}'s {defender_unit_type.name} deals 1 rout (⚑ )")
+            print(f" - {self.defender_faction.name} {defender_unit_type.name} deals 1 rout (⚑ )")
             defender_unit_type.regular_rout.resolve(self.defender_faction, self.attacker_faction)
         if defender_rout:
             print()
@@ -124,12 +124,12 @@ class Battle:
         print(f"{self.defender_faction.name} reveals {defender_damage} damage result(s).")
         print()
         for _ in range(0, attacker_damage):
-            print(f" - {self.attacker_faction.name}'s {attacker_unit_type.name} deals 1 damage (◉ )")
+            print(f" - {self.attacker_faction.name} {attacker_unit_type.name} deals 1 damage (◉ )")
             attacker_unit_type.regular_damage.resolve(self.attacker_faction, self.defender_faction)
         if attacker_damage:
             print()
         for _ in range(0, defender_damage):
-            print(f" - {self.defender_faction.name}'s {defender_unit_type.name} deals 1 damage (◉ )")
+            print(f" - {self.defender_faction.name} {defender_unit_type.name} deals 1 damage (◉ )")
             defender_unit_type.regular_damage.resolve(self.defender_faction, self.attacker_faction)
         if defender_damage:
             print()
@@ -144,12 +144,6 @@ class Battle:
             self.fate_deck.discard_hand(defender_hand)
 
     def calculate_battle_resolution(self, attacker_faction, defender_faction):
-        """
-        Resolves the battle by counting the number of standing units for both factions.
-        Units with shape 'hexagon' contribute to strength even if routed.
-        The faction with the most strength is declared the winner.
-        In case of a tie, the defender is declared the winner.
-        """
         # Function to calculate the strength of a faction
         def calculate_unit_strength(faction):
             unit_strength = 0
@@ -180,19 +174,19 @@ class Battle:
 
         print("━" * 79)
         print()
-        print(attacker_faction.name + "'s unit strenght is " + str(attacker_unit_strength))
-        print(defender_faction.name + "'s unit strenght is " + str(defender_unit_strength))
+        print(attacker_faction.name + " unit strenght is " + str(attacker_unit_strength))
+        print(defender_faction.name + " unit strenght is " + str(defender_unit_strength))
         print()
 
         if attacker_faction.strength > 0:
-            print(attacker_faction.name + "'s forification bonus is " + str(attacker_faction.strength))
+            print(attacker_faction.name + " forification bonus is " + str(attacker_faction.strength))
         if defender_faction.strength > 0:
-            print(defender_faction.name + "'s forification bonus is " + str(defender_faction.strength))
+            print(defender_faction.name + " forification bonus is " + str(defender_faction.strength))
         if attacker_faction.strength > 0 or defender_faction.strength > 0:
             print()
 
-        print(attacker_faction.name + "'s final strenght is " + str(attacker_strength))
-        print(defender_faction.name + "'s final strenght is " + str(defender_strength))
+        print(attacker_faction.name + " final strenght is " + str(attacker_strength))
+        print(defender_faction.name + " final strenght is " + str(defender_strength))
         print()
         print("˚₊‧⁺˖✮ The winner is " + winner + "! ✮˖⁺‧₊˚")
         print()
