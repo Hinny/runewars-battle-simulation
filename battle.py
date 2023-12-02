@@ -1,7 +1,6 @@
-import random
-from fate_deck import FateDeck
-from factions import Faction
-from unit_types import UnitType, Unit
+
+from log_config import setup_loggers
+detailed_logger, summary_logger = setup_loggers()
 
 class Battle:
     def __init__(self, attacker_faction, defender_faction, fate_deck):
@@ -10,15 +9,17 @@ class Battle:
         self.fate_deck = fate_deck
 
     def resolve_battle(self):
-        print("₪" * 79)
-        self.print_centered_line("Start of Battle", "₪")
+        detailed_logger.info("=" * 79)
+        start_of_battle_line = self.format_centered_line("Start of Battle", "=")
+        detailed_logger.info(start_of_battle_line)
+        self.print_legend()
         self.print_battle_status(self.attacker_faction, self.defender_faction)
-
+        self.log_summary_start(self.attacker_faction, self.defender_faction)
         round_number = 1
         # Loop through all the initative values
         for initiative in range(1, 6):
-            self.print_centered_line("INITIATIVE (🗲 ) " + str(initiative), "═")
-
+            initiative_line = self.format_centered_line("INITIATIVE (I) " + str(initiative), "=")
+            detailed_logger.info(initiative_line)
             while True:
                 # Sort out unit_types that has at least 1 standing unit that has not been already activated and that belongs to this initiative
                 standing_not_activated_attacker_unit_types = [
@@ -48,17 +49,21 @@ class Battle:
 
                 # If at least one of the attacker or defender unit types was selected, perform a sub step
                 if attacker_unit_type_choice or defender_unit_type_choice:
-                    self.print_centered_line("Battle Round " + str(round_number), "┈")
-                    print()
+                    battle_round_line = self.format_centered_line("Battle Round " + str(round_number), "~")
+                    detailed_logger.debug(battle_round_line)
+
+                    detailed_logger.debug("")
                     self.resolve_battle_round(attacker_unit_type_choice, defender_unit_type_choice)
-                    print()
-                    self.print_centered_line("Status After Round " + str(round_number), " ")
+                    detailed_logger.debug("")
+                    status_header_line = self.format_centered_line("Status After Round " + str(round_number), " ")
+                    detailed_logger.info(status_header_line)
                     self.print_battle_status(self.attacker_faction, self.defender_faction)
                     round_number += 1
                 else:
                     break
 
         winner, attacker_strength, defender_strength = self.calculate_battle_resolution(self.attacker_faction, self.defender_faction)
+        self.log_summary_end(winner, attacker_strength, defender_strength, self.attacker_faction, self.defender_faction)
         return winner, attacker_strength, defender_strength
 
     def resolve_battle_round(self, attacker_unit_type, defender_unit_type):
@@ -82,57 +87,59 @@ class Battle:
             defender_hand = self.fate_deck.draw_hand(len(defender_unit_type.units))
             (defender_damage, defender_rout, defender_orb) = self.fate_deck.calculate_total_results(defender_hand, defender_unit_type.shape)
 
-        self.print_centered_line(attacker_text + " | " + defender_text, " ")
-        print()
-        print(f"{self.attacker_faction.name} draws {len(attacker_hand)} Fate card(s).")
-        print(f"{self.defender_faction.name} draws {len(defender_hand)} Fate card(s).")
-        print()
+        result_header_line = self.format_centered_line(attacker_text + " | " + defender_text, " ")
+        detailed_logger.debug(result_header_line)
 
-        print(f"{self.attacker_faction.name} reveals {attacker_orb} orb result(s).")
-        print(f"{self.defender_faction.name} reveals {defender_orb} orb result(s).")
-        print()
+        detailed_logger.debug("")
+        detailed_logger.debug(f"{self.attacker_faction.name} draws {len(attacker_hand)} Fate cards")
+        detailed_logger.debug(f"{self.defender_faction.name} draws {len(defender_hand)} Fate cards")
+        detailed_logger.debug("")
+
+        detailed_logger.debug(f"{self.attacker_faction.name} reveals {attacker_orb} orb results")
+        detailed_logger.debug(f"{self.defender_faction.name} reveals {defender_orb} orb results")
+        detailed_logger.debug("")
         for i in range(0, attacker_orb):
-            print(f" - {self.attacker_faction.name} {attacker_unit_type.name} performs {attacker_unit_type.special_ability.name}")
+            detailed_logger.debug(f" - {self.attacker_faction.name} {attacker_unit_type.name} performs {attacker_unit_type.special_ability.name}")
             if i == 0:
-                print(f"   ({attacker_unit_type.special_ability.description})")
+                detailed_logger.debug(f"   ({attacker_unit_type.special_ability.description})")
             attacker_unit_type.special_ability.resolve(self.attacker_faction, self.defender_faction)
         if attacker_orb:
-            print()
+            detailed_logger.debug("")
         for i in range(0, defender_orb):
-            print(f" - {self.defender_faction.name} {defender_unit_type.name} performs {defender_unit_type.special_ability.name}")
+            detailed_logger.debug(f" - {self.defender_faction.name} {defender_unit_type.name} performs {defender_unit_type.special_ability.name}")
             if i == 0:
-                print(f"   ({defender_unit_type.special_ability.description})")
+                detailed_logger.debug(f"   ({defender_unit_type.special_ability.description})")
             defender_unit_type.special_ability.resolve(self.defender_faction, self.attacker_faction)
         if defender_orb:
-            print()
+            detailed_logger.debug("")
 
-        print(f"{self.attacker_faction.name} reveals {attacker_rout} rout result(s).")
-        print(f"{self.defender_faction.name} reveals {defender_rout} rout result(s).")
-        print()
+        detailed_logger.debug(f"{self.attacker_faction.name} reveals {attacker_rout} rout results")
+        detailed_logger.debug(f"{self.defender_faction.name} reveals {defender_rout} rout results")
+        detailed_logger.debug("")
         for _ in range(0, attacker_rout):
-            print(f" - {self.attacker_faction.name} {attacker_unit_type.name} deals 1 rout (⚑)")
+            detailed_logger.debug(f" - {self.attacker_faction.name} {attacker_unit_type.name} deals 1 rout (#)")
             attacker_unit_type.regular_rout.resolve(self.attacker_faction, self.defender_faction)
         if attacker_rout:
-            print()
+            detailed_logger.debug("")
         for _ in range(0, defender_rout):
-            print(f" - {self.defender_faction.name} {defender_unit_type.name} deals 1 rout (⚑ )")
+            detailed_logger.debug(f" - {self.defender_faction.name} {defender_unit_type.name} deals 1 rout (#)")
             defender_unit_type.regular_rout.resolve(self.defender_faction, self.attacker_faction)
         if defender_rout:
-            print()
+            detailed_logger.debug("")
 
-        print(f"{self.attacker_faction.name} reveals {attacker_damage} damage result(s).")
-        print(f"{self.defender_faction.name} reveals {defender_damage} damage result(s).")
-        print()
+        detailed_logger.debug(f"{self.attacker_faction.name} reveals {attacker_damage} damage results")
+        detailed_logger.debug(f"{self.defender_faction.name} reveals {defender_damage} damage results")
+        detailed_logger.debug("")
         for _ in range(0, attacker_damage):
-            print(f" - {self.attacker_faction.name} {attacker_unit_type.name} deals 1 damage (◉ )")
+            detailed_logger.debug(f" - {self.attacker_faction.name} {attacker_unit_type.name} deals 1 damage (o)")
             attacker_unit_type.regular_damage.resolve(self.attacker_faction, self.defender_faction)
         if attacker_damage:
-            print()
+            detailed_logger.debug("")
         for _ in range(0, defender_damage):
-            print(f" - {self.defender_faction.name} {defender_unit_type.name} deals 1 damage (◉ )")
+            detailed_logger.debug(f" - {self.defender_faction.name} {defender_unit_type.name} deals 1 damage (o)")
             defender_unit_type.regular_damage.resolve(self.defender_faction, self.attacker_faction)
         if defender_damage:
-            print()
+            detailed_logger.debug("")
         if attacker_unit_type:
             for unit in attacker_unit_type.units:
                 unit.has_activated = True
@@ -165,42 +172,54 @@ class Battle:
 
         # Determine the winner
         if attacker_strength > defender_strength:
-            winner = attacker_faction.name
+            winner = attacker_faction
         elif defender_strength > attacker_strength:
-            winner = defender_faction.name
+            winner = defender_faction
         else:
             # In case of a tie, the defender wins
-            winner = defender_faction.name
+            winner = defender_faction
 
-        print("━" * 79)
-        print()
-        print(attacker_faction.name + " unit strenght is " + str(attacker_unit_strength))
-        print(defender_faction.name + " unit strenght is " + str(defender_unit_strength))
-        print()
+        detailed_logger.debug("~" * 79)
+        detailed_logger.debug("")
+        detailed_logger.debug(attacker_faction.name + " unit strenght is " + str(attacker_unit_strength))
+        detailed_logger.debug(defender_faction.name + " unit strenght is " + str(defender_unit_strength))
+        detailed_logger.debug("")
 
         if attacker_faction.strength > 0:
-            print(attacker_faction.name + " forification bonus is " + str(attacker_faction.strength))
+            detailed_logger.debug(attacker_faction.name + " forification bonus is " + str(attacker_faction.strength))
         if defender_faction.strength > 0:
-            print(defender_faction.name + " forification bonus is " + str(defender_faction.strength))
+            detailed_logger.debug(defender_faction.name + " forification bonus is " + str(defender_faction.strength))
         if attacker_faction.strength > 0 or defender_faction.strength > 0:
-            print()
+            detailed_logger.debug("")
 
-        print(attacker_faction.name + " final strenght is " + str(attacker_strength))
-        print(defender_faction.name + " final strenght is " + str(defender_strength))
-        print()
-        print("˚₊‧⁺˖✮ The winner is " + winner + "! ✮˖⁺‧₊˚")
-        print()
-        print("₪" * 79)
+        detailed_logger.info(attacker_faction.name + " final strenght is " + str(attacker_strength))
+        detailed_logger.info(defender_faction.name + " final strenght is " + str(defender_strength))
+        detailed_logger.debug("")
+        detailed_logger.info(f" ---=== The winner is {winner.name} ({winner.player.name})! ===---")
+        detailed_logger.debug("")
+        detailed_logger.debug("=" * 79)
+
         return winner, attacker_strength, defender_strength
 
+    def print_legend(self):
+        legend_header_line = self.format_centered_line("Legend", "~")
+        detailed_logger.debug(legend_header_line)
+        detailed_logger.debug("I = Initiative")
+        detailed_logger.debug("@ = Health")
+        detailed_logger.debug("T = Triangle")
+        detailed_logger.debug("C = Circle")
+        detailed_logger.debug("R = Rectangle")
+        detailed_logger.debug("H = Hexagon")
+        detailed_logger.debug("o = Damage")
+        detailed_logger.debug("# = Routed")
+        detailed_logger.debug("X = Activated")
+        detailed_logger.debug("~" * 79)
+
     def print_battle_status(self, attacker_faction, defender_faction):
-        """
-        Prints the current status of the battle in the terminal.
-        Each unit is represented with its type, initiative, health, shape, and damage/routed status.
-        The damage and routed status are aligned independently of the length of the unit type name.
-        """
-        print()
-        print(f"Attacker: {attacker_faction.name:<29} | Defender: {defender_faction.name:<30}")
+        detailed_logger.info("")
+        detailed_logger.info(f"Attacker                                | Defender")
+        detailed_logger.info(f"Faction: {attacker_faction.name:<30} | Faction: {defender_faction.name}")
+        detailed_logger.info(f"Player: {attacker_faction.player.name:<31} | Player: {defender_faction.player. name}")
 
         # Gather units for both factions
         attacker_units = [unit for unit_type in attacker_faction.unit_types for unit in unit_type.units]
@@ -213,15 +232,11 @@ class Battle:
         for i in range(max_units_length):
             attacker_unit_str = attacker_units[i].get_line_str() if i < len(attacker_units) else ''
             defender_unit_str = defender_units[i].get_line_str() if i < len(defender_units) else ''
-            print(f"{attacker_unit_str:<39} | {defender_unit_str}")
+            detailed_logger.info(f"{attacker_unit_str:<39} | {defender_unit_str}")
 
-        print()
+        detailed_logger.info("")
 
-    def print_centered_line(self, text, padding_char):
-        """
-        Prints a line of 79 characters with the text string centered and padded with the padding character.
-        There will be a whitespace on each side of the text string.
-        """
+    def format_centered_line(self, text, padding_char):
         # Total length of the line
         total_length = 79
 
@@ -239,4 +254,19 @@ class Battle:
             line += padding_char
 
         # Printing the line
-        print(line)
+        return line
+
+    def log_summary_start(self, attacker_faction, defender_faction):
+        summary_logger.info(f"Attacker: {attacker_faction.name}")
+        for unit_type in attacker_faction.unit_types:
+            summary_logger.info(f"   {unit_type.name} x {len(unit_type.units)}")
+        summary_logger.info(f"Defender: {defender_faction.name}")
+        for unit_type in defender_faction.unit_types:
+            summary_logger.info(f"   {unit_type.name} x {len(unit_type.units)}")
+        summary_logger.info("")
+
+    def log_summary_end(self, winner, attacker_strength, defender_strength, attacker_faction, defender_faction):
+        summary_logger.info(f"{attacker_faction.name:<15}: {attacker_strength}")
+        summary_logger.info(f"{defender_faction.name:<15}: {defender_strength}")
+        summary_logger.info(f"Winner: {winner.name} ({winner.player.name})")
+        summary_logger.info("~" * 30)

@@ -1,5 +1,6 @@
 import random
-
+from log_config import setup_loggers
+detailed_logger, summary_logger = setup_loggers()
 class SpecialAbility:
     def __init__(self, name, description):
         self.name = name
@@ -59,7 +60,7 @@ class SpecialAbility:
 class RegularDamage(SpecialAbility):
     def __init__(self):
         self.name = "Damage"
-        self.description = "Deal 1 damage (◉ )."
+        self.description = "Deal 1 damage (o)."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_units_regular_damage_priority(opponent_faction)
@@ -69,7 +70,7 @@ class RegularDamage(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.damage_unit()
@@ -77,7 +78,7 @@ class RegularDamage(SpecialAbility):
 class RegularRout(SpecialAbility):
     def __init__(self):
         self.name = "Rout"
-        self.description = "Deal 1 rout (⚑ )."
+        self.description = "Deal 1 rout (#)."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_units_regular_rout_priority(opponent_faction)
@@ -87,7 +88,7 @@ class RegularRout(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.rout_unit()
@@ -95,7 +96,7 @@ class RegularRout(SpecialAbility):
 class ConcentratedFire(SpecialAbility):
     def __init__(self):
         self.name = "Concentrated Fire"
-        self.description = "Deal 1 damage (◉ ). Your opponent must assign this to a unit with more than 1 health (♥), if able."
+        self.description = "Deal 1 damage (o). Your opponent must assign this to a unit with more than 1 health (@), if able."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_unit_more_health_damage_priority(opponent_faction)
@@ -105,7 +106,7 @@ class ConcentratedFire(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.damage_unit()
@@ -138,7 +139,7 @@ class ConcentratedFire(SpecialAbility):
 class ValiantStrike(SpecialAbility):
     def __init__(self):
         self.name = "Valiant Strike"
-        self.description = "Deal 1 damage (◉ ). If this does not defeate the unit, it is dealt an additional 1 damage (◉ )."
+        self.description = "Deal 1 damage (o). If this does not defeate the unit, it is dealt an additional 1 damage (o)."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_units_regular_damage_priority(opponent_faction)
@@ -148,7 +149,7 @@ class ValiantStrike(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         isDead = target_unit.damage_unit()
@@ -159,7 +160,7 @@ class ValiantStrike(SpecialAbility):
 class Command(SpecialAbility):
     def __init__(self):
         self.name = "Command"
-        self.description = "Deal 1 rout (⚑ ). Then draw 1 Tactics card."
+        self.description = "Deal 1 rout (#). Then draw 1 Tactics card."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_units_regular_rout_priority(opponent_faction)
@@ -169,7 +170,7 @@ class Command(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.rout_unit()
@@ -187,7 +188,7 @@ class LaySiege(SpecialAbility):
 class CrackShot(SpecialAbility):
     def __init__(self):
         self.name = "Crack Shot"
-        self.description = "Deal 1 damage (◉ ) to the unit of your choice."
+        self.description = "Deal 1 damage (o) to the unit of your choice."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_all_units(opponent_faction)
@@ -197,7 +198,7 @@ class CrackShot(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.damage_unit()
@@ -205,7 +206,7 @@ class CrackShot(SpecialAbility):
 class Charge(SpecialAbility):
     def __init__(self):
         self.name = "Charge"
-        self.description = "Rout up to 2 enemy triangle (▲ ) units or 1 enemy rectangle (∎ ) unit of your choice."
+        self.description = "Rout up to 2 enemy triangle (T) units or 1 enemy rectangle (R) unit of your choice."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_standing_triangle_or_rectangle_units(opponent_faction)
@@ -215,7 +216,7 @@ class Charge(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.rout_unit()
@@ -228,7 +229,7 @@ class Charge(SpecialAbility):
             elif len(eligible_units) == 1:
                 target_unit = eligible_units[0]
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
 
             target_unit.rout_unit()
@@ -252,7 +253,7 @@ class WordOfVaal(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.retreat_unit()
@@ -260,7 +261,7 @@ class WordOfVaal(SpecialAbility):
 class Overpower(SpecialAbility):
     def __init__(self):
         self.name = "Overpower"
-        self.description = "Deal 1 damage (◉ ) or destroy the damaged or routed enemy unit of your choice."
+        self.description = "Deal 1 damage (o) or destroy the damaged or routed enemy unit of your choice."
 
     def resolve(self, your_faction, opponent_faction):
 
@@ -268,13 +269,13 @@ class Overpower(SpecialAbility):
         potential_damaged_or_routed_targets = self.get_all_damaged_and_routed_units(opponent_faction)
 
         if len(potential_regular_damage_targets) > 0 and len(potential_damaged_or_routed_targets) > 0:
-            choice = your_faction.player.choose_option("Deal 1 damage (◉ )", "Destroy the damaged or routed enemy unit of your choice")
+            choice = your_faction.player.choose_option("Deal 1 damage (o)", "Destroy the damaged or routed enemy unit of your choice")
         elif len(potential_regular_damage_targets) > 0 and len(potential_damaged_or_routed_targets) == 0:
             choice = 1
         elif len(potential_regular_damage_targets) == 0 and len(potential_damaged_or_routed_targets) > 0:
             choice = 2
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         if choice == 1:
@@ -285,7 +286,7 @@ class Overpower(SpecialAbility):
             elif len(eligible_units) == 1:
                 target_unit = eligible_units[0]
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
 
             target_unit.damage_unit()
@@ -298,7 +299,7 @@ class Overpower(SpecialAbility):
             elif len(eligible_units) == 1:
                 target_unit = eligible_units[0]
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
 
             target_unit.destroy_unit()
@@ -324,7 +325,7 @@ class Undying(SpecialAbility):
 class Stun(SpecialAbility):
     def __init__(self):
         self.name = "Stun"
-        self.description = "Your opponent must rout 1 of their units with initiative (🗲 ) 2 or higher."
+        self.description = "Your opponent must rout 1 of their units with initiative (I) 2 or higher."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_unit_more_initiative_rout_priority(opponent_faction)
@@ -334,7 +335,7 @@ class Stun(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.rout_unit()
@@ -364,7 +365,7 @@ class Stun(SpecialAbility):
 class Ravage(SpecialAbility):
     def __init__(self):
         self.name = "Ravage"
-        self.description = "Deal 1 damage (◉ ) and then draw and resolve a new Fate cards (limit once per beastman)."
+        self.description = "Deal 1 damage (o) and then draw and resolve a new Fate cards (limit once per beastman)."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_units_regular_damage_priority(opponent_faction)
@@ -374,7 +375,7 @@ class Ravage(SpecialAbility):
         elif len(eligible_units) == 1:
             target_unit = eligible_units[0]
         else:
-            print(f"   No eligible target units.")
+            detailed_logger.debug(f"      No eligible target units.")
             return
 
         target_unit.damage_unit()
@@ -384,33 +385,35 @@ class Ravage(SpecialAbility):
         draw_card = random.randint(1, 31)
 
         if draw_card <= 14:
-            print(f"   Fate card result: deal 1 damage (◉ )")
+            detailed_logger.debug(f"      Fate card result: deal 1 damage (o)")
             eligible_units = self.get_units_regular_damage_priority(opponent_faction)
             if len(eligible_units) > 1:
                 target_unit = opponent_faction.player.choose_unit(eligible_units)
             elif len(eligible_units) == 1:
                 target_unit = eligible_units[0]
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
             target_unit.damage_unit()
 
         elif draw_card > 14 and draw_card <= 18:
-            print(f"   Fate card result: deal 1 rout (⚑ )")
+            detailed_logger.debug(f"      Fate card result: deal 1 rout (#)")
             eligible_units = self.get_units_regular_rout_priority(opponent_faction)
             if len(eligible_units) > 1:
                 target_unit = opponent_faction.player.choose_unit(eligible_units)
             elif len(eligible_units) == 1:
                 target_unit = eligible_units[0]
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
             target_unit.rout_unit()
+        else:
+            detailed_logger.debug(f"      Fate card result: -")
 
 class Burning(SpecialAbility):
     def __init__(self):
         self.name = "Burning"
-        self.description = "Your opponent must deal 1 damage (◉ ) to 2 of their different standing units."
+        self.description = "Your opponent must deal 1 damage (o) to 2 of their different standing units."
 
     def resolve(self, your_faction, opponent_faction):
         eligible_units = self.get_standing_damaged_units(opponent_faction)
@@ -431,7 +434,7 @@ class Burning(SpecialAbility):
             elif len(eligible_units) == 1:
                 second_target_unit = eligible_units[0]
             else:
-                print(f"   Only one eligible target unit.")
+                detailed_logger.debug(f"      Only one eligible target unit.")
         else:
             eligible_units = self.get_standing_undamaged_units(opponent_faction)
             if len(eligible_units) > 3:
@@ -441,9 +444,9 @@ class Burning(SpecialAbility):
                 second_target_unit = eligible_units[1]
             elif len(eligible_units) == 1:
                 first_target_unit = eligible_units[0]
-                print(f"   Only one eligible target unit.")
+                detailed_logger.debug(f"      Only one eligible target unit.")
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
 
         if first_target_unit != None:
@@ -469,7 +472,7 @@ class Burning(SpecialAbility):
 class FlamingBreath(SpecialAbility):
     def __init__(self):
         self.name = "Flaming Breath"
-        self.description = "Destroy up to 3 enemy triangle (▲ ) units of your choice."
+        self.description = "Destroy up to 3 enemy triangle (T) units of your choice."
 
     def resolve(self, your_faction, opponent_faction):
         for i in range(3):
@@ -480,7 +483,7 @@ class FlamingBreath(SpecialAbility):
             elif len(eligible_units) == 1:
                 target_unit = eligible_units[0]
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
 
             target_unit.destroy_unit()
@@ -488,7 +491,7 @@ class FlamingBreath(SpecialAbility):
 class Rage(SpecialAbility):
     def __init__(self):
         self.name = "Rage"
-        self.description = "Deal 1 damage (◉ ) for each damage on 1 of your Giants."
+        self.description = "Deal 1 damage (o) for each damage on 1 of your Giants."
 
     def resolve(self, your_faction, opponent_faction):
 
@@ -508,7 +511,7 @@ class Rage(SpecialAbility):
             elif len(eligible_units) == 1:
                 target_unit = eligible_units[0]
             else:
-                print(f"   No eligible target units.")
+                detailed_logger.debug(f"      No eligible target units.")
                 return
 
             target_unit.damage_unit()
