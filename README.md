@@ -12,10 +12,11 @@ A hobby project that aim to balance units (especially homebrew factions) for Run
 - [x] Cleaner printouts
 - [x] special_abilities.py - class for handling damage, rout and special ablities.
 - [x] Faction Assets
-- [ ] All original Special Abilities and Factions
-- [ ] Logging to file
+- [x] All units and Special Abilities for Latari, Daqan and Neutral
+- [x] Logging to file
 - [ ] Desision Agent Plugin
   - [ ] ML
 - [ ] Train ML
+- [ ] All original Special Abilities and Factions
 - [ ] All units including expansions (official and fanmade)
 - [ ] Resource dials

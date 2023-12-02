@@ -2,8 +2,9 @@ import random
 from factions import Faction
 
 class PlayerInterface:
-    def __init__(self):
+    def __init__(self, name):
         self.faction = None
+        self.name = name
 
     def set_faction(self, faction):
         self.faction = faction

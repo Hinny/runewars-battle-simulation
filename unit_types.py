@@ -1,4 +1,6 @@
 from special_abilities import RegularDamage, RegularRout, ConcentratedFire, ValiantStrike, Command, LaySiege, CrackShot, Charge, WordOfVaal, Overpower, Undying, Stun, Ravage, Burning, FlamingBreath, Rage
+from log_config import setup_loggers
+detailed_logger, summary_logger = setup_loggers()
 
 class UnitType:
     def __init__(self, name, shape, health, special_ability, initiative, maxNumber, faction, number_of_units):
@@ -18,15 +20,15 @@ class UnitType:
         return f"{self.name} {self.get_specs_str()}"
 
     def get_specs_str(self):
-        return f"({self.initiative}🗲  {self.health}♥  {self.shape_symbol()} )"
+        return f"({self.initiative}I {self.health}@ {self.shape_symbol()})"
 
     def shape_symbol(self):
         # Returnera motsvarande symbol för enhetens form
         shape_symbols = {
-            'triangle': '▲',
-            'circle': '●',
-            'rectangle': '∎',
-            'hexagon': '⬣'
+            'triangle': 'T',
+            'circle': 'C',
+            'rectangle': 'R',
+            'hexagon': 'H'
         }
         return shape_symbols.get(self.shape, '?')  # Returnera '?' om formen inte finns
 
@@ -53,39 +55,39 @@ class Unit:
     def get_line_str(self):
         # Bestäm kolumnbredder
         name_width = 16  # 15 tecken + 1 för blanksteg
-        specs_width = 12  # Antaget bredd för specs (ex. " (5🗲 3♥ ⬣)")
-        status_width = 7  # Antaget bredd för status (ex. "✖ ◉◉⚑")
+        specs_width = 10  # Antaget bredd för specs (ex. " (5I 3@ H)")
+        status_width = 7  # Antaget bredd för status (ex. "X oo#")
 
         return f"{self.unit_type.name:<{name_width}}{self.unit_type.get_specs_str():<{specs_width}}{self.get_status_str():<{status_width}}"
 
     def get_status_str(self):
-        activated_str = "✖" if self.has_activated else " "
-        routed_str = "⚑" if not self.is_standing else " "
-        damage_str = "◉" * self.damage_taken
+        activated_str = "X" if self.has_activated else " "
+        routed_str = "#" if not self.is_standing else " "
+        damage_str = "o" * self.damage_taken
         return f"{activated_str} {routed_str} {damage_str}"
 
     def damage_unit(self):
-        print(f"   {self.unit_type.faction.name} {self.unit_type.name} takes 1 damage")
+        detailed_logger.debug(f"      {self.unit_type.faction.name} {self.unit_type.name} takes 1 damage")
         self.damage_taken += 1
         isDead = False
         # Check if the unit is destroyed
         if self.damage_taken >= self.unit_type.health:
-            print(f"   ({self.unit_type.name} destroyed)")
+            detailed_logger.debug(f"      ({self.unit_type.name} destroyed)")
             self.unit_type.units.remove(self)
             isDead = True
 
         return isDead
 
     def rout_unit(self):
-        print(f"   {self.unit_type.faction.name} {self.unit_type.name} is routed")
+        detailed_logger.debug(f"      {self.unit_type.faction.name} {self.unit_type.name} is routed")
         self.is_standing = False
 
     def destroy_unit(self):
-        print(f"   {self.unit_type.faction.name} {self.unit_type.name} is destroyed")
+        detailed_logger.debug(f"      {self.unit_type.faction.name} {self.unit_type.name} is destroyed")
         self.unit_type.units.remove(self)
 
     def retreat_unit(self):
-        print(f"   {self.unit_type.faction.name} {self.unit_type.name} retreats from the battle")
+        detailed_logger.debug(f"      {self.unit_type.faction.name} {self.unit_type.name} retreats from the battle")
         self.unit_type.units.remove(self)
 
 

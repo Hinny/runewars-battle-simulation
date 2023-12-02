@@ -118,5 +118,3 @@ class NeutralFaction(Faction):
 
     def add_giant(self, quantity):
          self.unit_types.append(Giant(self, quantity))
-
-
